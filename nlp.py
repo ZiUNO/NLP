@@ -17,7 +17,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from scipy.stats import pearsonr
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
 stop_word = list(set(stopwords.words('english')))
 
@@ -78,7 +78,7 @@ def vectorization(v):
     :param v: 文本列表
     :return: 向量化后的列表
     """
-    tfidf = TfidfVectorizer()  # 可以更改为其他的向量化方法
+    tfidf = CountVectorizer()  # 可以更改为其他的向量化方法
     rho = tfidf.fit_transform(v).toarray()
     return rho
 
@@ -129,5 +129,6 @@ plt.show()
 s = []
 for i, item in enumerate(output):
     s.append('%f\t%s\t%s' % (item, input_content[i][0], input_content[i][1]))
+    # s.append('%f' % item)
 with open('output.txt', 'w', encoding='utf-8') as f:
     f.write('\n'.join(s))
