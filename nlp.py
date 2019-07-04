@@ -41,7 +41,15 @@ def get_data(path):
 
 
 def __lemmatizer(s):
+    """
+    词性归一化
+    :param s: 原始文本字符串
+    :return: 翻译为统一词性的文本串
+    """
     s = s.split(' ')
+    for i, item in enumerate(s):
+        s[i] = item[:-1] if item.endswith('s') else item
+        s[i] = item[:-2] if item.endswith('er') else item
     wordnet_lemmatizer = WordNetLemmatizer()
     s = [wordnet_lemmatizer.lemmatize(i, pos='v') for i in s]
     s = ' '.join(s)
@@ -49,26 +57,33 @@ def __lemmatizer(s):
 
 
 def __remove_stop_word(s):
+    """
+    去除停用词
+    :param s: 原始文本字符串
+    :return: 去除停用词的文本字符串
+    """
     s = word_tokenize(s)
     pos = pos_tag(s)
-    s = [item for i, item in enumerate(s) if not item in stop_word and pos[i][1] != 'POS'] # FIXME [__remove_stop_word] 当POS为NNP的时候如果长度为1的情况需要剔除
-    # TODO 当POS为NNP的时候，需要注意名词为表示人物的名词，寻找将人物名词转换为词根方法
-    print(pos_tag(s))
+    s = [item for i, item in enumerate(s) if not item in stop_word and pos[i][1] != 'POS']
+
     return ' '.join(s)
+
 
 def participle(s):
     """
-    处理原始字符串，进行分词操作
-    :param s: 原始字符串
-    :return: 处理后的的字符串
+    处理原始文本串，进行分词操作
+    :param s: 原始文本串
+    :return: 处理后的的文本串
     """
     en_trantab = str.maketrans({key: None for key in string.punctuation})
-    ch_trantab = str.maketrans({key: None for key in hanzi.punctuation})
+    ch_trantab = str.maketrans({key: " " for key in hanzi.punctuation})
     s = s.lower()
     s = __remove_stop_word(s)
     s = s.translate(en_trantab)
     s = s.translate(ch_trantab)
+    s = __remove_stop_word(s)
     s = __lemmatizer(s)
+    s = __remove_stop_word(s)
     return s
 
 
