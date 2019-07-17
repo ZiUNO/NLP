@@ -45,24 +45,50 @@
   \begin{enumerate}
     \item 直连架构：根据以前的词得到下一个词的概率分布。
     \begin{enumerate}
-      \item $input$:$(w_{t-n},\cdots,w_{t-1})$
-      \item $C(i)$:$(C(w_{t-n}),\cdots,C(w_{t-1}))$
-      \item $h_{i}$:$h(i,C(w_{t-1}),\cdots,C(w_{t-n}))$
-      \item $output$:$softmax(h)_{i}$
+      \item $input:(w_{t-n},\cdots,w_{t-1})$
+      \item $C(i):(C(w_{t-n}),\cdots,C(w_{t-1}))$
+      \item $h_{i}:h(i,C(w_{t-1}),\cdots,C(w_{t-n}))$
+      \item $output:softmax(h)_{i}$
     \end{enumerate}
     \item 循环架构：根据当前所有词（下一个词为所有可能词）获得概率分布。
     \begin{enumerate}
-      \item $input$:$(w_{t-n},\cdots,w_{t-1},i)$
-      \item $C(i)$:$(C(w_{t-n}),\cdots,C(w_{t-1}),C(i))$
-      \item $h_{i}$:$h(C(i),C(w_{t-1}),\cdots,C(w_{t-n}))$
-      \item $output$:$softmax(h)_{i}$
+      \item $input:(w_{t-n},\cdots,w_{t-1},i)$
+      \item $C(i):(C(w_{t-n}),\cdots,C(w_{t-1}),C(i))$
+      \item $h_{i}:h(C(i),C(w_{t-1}),\cdots,C(w_{t-n}))$
+      \item $output:softmax(h)_{i}$
     \end{enumerate}
   \end{enumerate}
 \end{enumerate}
-\par{$maximize$:$L=\frac{1}{T}\sum_{t}\log p_{w_{t}}(C(w_{t-n}),\cdots,C(w_{t-1});\theta)+R(\theta,C)$}
+\par{$maximize:L=\frac{1}{T}\sum_{t}\log p_{w_{t}}(C(w_{t-n}),\cdots,C(w_{t-1});\theta)+R(\theta,C)$}
+\par{$result:(\theta,C)$}
+\section{改良和其他技巧}
+\paragraph{短列表}
+将最高概率的词组成“短列表”（$L_{t}$）。短列表可使用插值三元语言模型获得，包含最可能出现的下一词，与前两个词相关联。
+$$
+P(w_{t}=i|h_{t})=
+\begin{cases}
+\widehat{P}_{NN}(w_{t}=i|w_{t}\in L_{t},h_{t})\widehat{P}_{trigram}(w_{t}\in L_{t}|h_{t}) & {i\in L_{t}}\\
+P_{trigram}(w_{t}=i|h_{t}) & {i\notin L_{t}}
+\end{cases}
+$$
+\par{其中，$\widehat{P}_{NN}(w_{t}=i|w_{t}\in L_{t},h_{t})$表示归一化得分（$softmax$仅对$L_{t}$中的词进行归一化），$\widehat{P}_{trigram}(w_{t}\in L_{t}|h_{t})=\sum_{i\in L_{t}}\widehat{P}_{trigram}(i|h_{t})$，$\widehat{P}_{trigram}(i|h_{t})$表示使用插值三元模型计算得到的下一个词的概率。}
+\paragraph{查表识别}
+将预计算的神经网络的输出保存在哈希表中。
+\paragraph{SGD}
+\paragraph{容量控制}
+\paragraph{词向量初始化}
+\begin{enumerate}
+  \item $[-0.01,0.01]$内的随机值。
+  \item 获得共现矩阵，并计算SVD。
+\end{enumerate}
+\paragraph{词汇表外词语}
+使用短列表中所有单词的加权平均特征向量作为特征向量。
+\section{实验结果}
+
 \section{问题}
 \begin{enumerate}
-  \item 原文The Proposed Model: two Architectures中的两种架构构想中的$g$和$h$有点混乱。
+  \item The Proposed Model: two Architectures中的两种架构构想中的$g$和$h$有点混乱。
+  \item $L=\frac{1}{T}\sum_{t}\log p_{w_{t}}(C(w_{t-n}),\cdots,C(w_{t-1});\theta)+R(\theta,C)$，其中$\sum_{t}$下方的$t$是否表示所有真值。
+  \item 词汇表外词语的相对概率用短列表的权重表示。
 \end{enumerate}
-
 \end{document}
