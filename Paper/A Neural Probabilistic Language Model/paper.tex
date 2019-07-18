@@ -84,11 +84,12 @@ $$
 \paragraph{词汇表外词语}
 使用短列表中所有单词的加权平均特征向量作为特征向量。
 \section{实验结果}
-
+\par{实验中主要的结果表明：神经网络比平滑三元模型表现得更好。}
 \section{问题}
 \begin{enumerate}
   \item The Proposed Model: two Architectures中的两种架构构想中的$g$和$h$有点混乱。
-  \item $L=\frac{1}{T}\sum_{t}\log p_{w_{t}}(C(w_{t-n}),\cdots,C(w_{t-1});\theta)+R(\theta,C)$，其中$\sum_{t}$下方的$t$是否表示所有真值。
-  \item 词汇表外词语的相对概率用短列表的权重表示。
+  \item $L=\frac{1}{T}\sum_{t}\log p_{w_{t}}(C(w_{t-n}),\cdots,C(w_{t-1});\theta)+R(\theta,C)$，其中$\sum_{t}$下方的$t$是否表示所有真值？
+  \item 词汇表外词语的相对概率用短列表的权重表示？
+  \item 如果下一词为词汇表外词语？
 \end{enumerate}
 \end{document}
